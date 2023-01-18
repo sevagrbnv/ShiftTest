@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="bin"
+            type="com.example.shifttest.data.remoteModel.BinData" />
+    </data>
+
+    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="8dp"
+        android:elevation="8dp"
+        app:cardCornerRadius="16dp"
+        android:clickable="true"
+        android:layout_marginHorizontal="8dp">
+
+        <TextView
+            android:id="@+id/item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="@{bin.request}"
+            android:textSize="16sp" />
+    </androidx.cardview.widget.CardView>
+</layout>
