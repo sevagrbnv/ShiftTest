@@ -79,7 +79,6 @@ class MainFragment : Fragment() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 viewModel.resetErrorInput()
             }
-
             override fun afterTextChanged(p0: Editable?) {}
         })
     }
@@ -135,22 +134,15 @@ class MainFragment : Fragment() {
 
     // set text "history is empty" on empty list
     private fun checkListForEmpty() {
-        if (viewModel.isEmptyList()) {
-            setVisibleView(binding.emptyView)
-        }
+        if (viewModel.isEmptyList())
+            shouldShowRcView(false)
+        else shouldShowRcView(true)
     }
 
     //Manage visibility of RecyclerView and other elements
-    private fun setVisibleView(view: View) {
-        binding.rcView.isVisible = false
-        binding.emptyView.isVisible = false
-        binding.progressBar.isVisible = false
-        when (view) {
-            binding.rcView -> view.isVisible = true
-            binding.emptyView -> view.isVisible = true
-            binding.progressBar -> view.isVisible = true
-        }
-
+    private fun shouldShowRcView(show: Boolean) {
+        binding.rcView.isVisible = show
+        binding.emptyView.isVisible = !show
     }
 
     private fun setConnectionLiveData() {

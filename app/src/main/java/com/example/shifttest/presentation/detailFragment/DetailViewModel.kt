@@ -42,8 +42,8 @@ class DetailViewModel @Inject constructor(
             response.body().let { bin ->
                 bin.let {
                     val item = it?.copy(request = binString)
-                    _item.postValue(item)
                     addBin(item)
+                    _item.postValue(item)
                 }
             }
         } else {
