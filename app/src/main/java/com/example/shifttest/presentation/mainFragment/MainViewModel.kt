@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shifttest.data.remoteDataSource.Resource
 import com.example.shifttest.domain.AddBinUseCase
 import com.example.shifttest.domain.DeleteBinUseCase
 import com.example.shifttest.domain.GetBinListUseCase
@@ -24,31 +23,10 @@ class MainViewModel @Inject constructor(
 
     val binList = getBinListUseCase.execute()
 
-    private val _allData = MutableLiveData<Resource<BinData>>()
-    val allData: LiveData<Resource<BinData>>
-        get() = _allData
-
-    fun getInfo(binString: String) = viewModelScope.launch {
+    fun checkCorrect(binString: String): Boolean {
         val bin = parseBin(binString)
-        val validInput = isValidInput(bin)
-        if (validInput) {
-            _allData.postValue(Resource.Loading())
-            val response = getRemoteBinUseCase.execute(bin)
-
-            if (response?.isSuccessful == true) {
-                response.body().let { bin ->
-                    launch {
-                        bin?.let { addBin(it.copy(request = binString)) }
-                    }
-                }
-            } else {
-                _allData.postValue(Resource.Error(message = "404, not found"))
-            }
-        }
+        return isValidInput(bin)
     }
-
-    private suspend fun addBin(bin: BinData) =
-        addBinUseCase.execute(bin).toInt()
 
     fun deleteBin(bin: BinData) {
         viewModelScope.launch {

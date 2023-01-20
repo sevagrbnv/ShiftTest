@@ -35,8 +35,19 @@ class MainActivity : AppCompatActivity(), MainFragment.OpenSecondFragmentListene
         }
     }
 
-    override fun openSecondFragment(itemId: Int) {
-        val fragment = DetailFragment.newInstance(itemId)
+    override fun openSecondFragmentById(itemId: Int) {
+        val fragment = DetailFragment.newInstanceFromDB(itemId)
+        container?.let {
+            supportFragmentManager.beginTransaction()
+                .replace(it.id, fragment)
+                .addToBackStack(null)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                .commit()
+        }
+    }
+
+    override fun openSecondFragmentByBin(bin: String) {
+        val fragment = DetailFragment.newInstanceFromRemote(bin)
         container?.let {
             supportFragmentManager.beginTransaction()
                 .replace(it.id, fragment)

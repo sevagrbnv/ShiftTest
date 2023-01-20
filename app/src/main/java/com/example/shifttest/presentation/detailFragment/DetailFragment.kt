@@ -6,10 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.shifttest.R
+import com.example.shifttest.data.remoteDataSource.Resource
 import com.example.shifttest.databinding.FragmentDetailBinding
 import com.example.shifttest.model.BinData
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,6 +22,7 @@ class DetailFragment : Fragment() {
     private lateinit var binding: FragmentDetailBinding
     val viewModel by viewModels<DetailViewModel>()
     private var itemId = UNDEFINED_ID
+    private var itemBin = UNDEFINED_BIN
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,14 +39,45 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setNetworkLiveData()
         initData()
     }
 
     private fun initData() {
-        viewModel.getItem(itemId)
-        viewModel.item.observe(viewLifecycleOwner) {
-            setData(it)
+        if (itemId != UNDEFINED_ID)
+            viewModel.getItemFromDB(itemId)
+        else if (itemBin != UNDEFINED_BIN)
+            viewModel.getRemoteInfo(itemBin)
+        else throw RuntimeException("UNDEFINED MODE")
+        viewModel.item.observe(viewLifecycleOwner) { bin ->
+            bin?.let {
+                setData(it)
+            }
         }
+    }
+
+    private fun setNetworkLiveData() {
+        viewModel.allData.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is Resource.Success -> {
+                    shouldToShowProgressBar(false)
+                }
+                is Resource.Error -> {
+                    shouldToShowProgressBar(false)
+                    binding.request.text = getString(R.string.not_found)
+                    Snackbar.make(binding.root, getString(R.string.not_found), Snackbar.LENGTH_LONG)
+                        .show()
+                }
+                is Resource.Loading -> {
+                    shouldToShowProgressBar(true)
+                }
+            }
+        }
+    }
+
+    private fun shouldToShowProgressBar(show: Boolean) {
+        binding.progressBar.isVisible = show
+        binding.columns.isVisible = !show
     }
 
     private fun setClickListeners() {
@@ -82,6 +118,7 @@ class DetailFragment : Fragment() {
     }
 
     private fun setData(item: BinData) {
+        shouldToShowProgressBar(false)
         binding.request.text = item.request
         binding.number.text = "length: ${item.number.length}, luhn: ${item.number.luhn}"
         binding.scheme.text = "scheme: ${item.scheme}"
@@ -107,21 +144,30 @@ class DetailFragment : Fragment() {
 
     private fun parseParam() {
         val args = requireArguments()
-        if (!args.containsKey(ID_KEY))
-            throw RuntimeException("Id not found")
-        itemId = args.getInt(ID_KEY)
+        if (args.containsKey(ID_KEY))
+            itemId = args.getInt(ID_KEY)
+        else if (args.containsKey(BIN))
+            itemBin = args.getString(BIN).toString()
+        else throw RuntimeException("Parameters not found")
     }
 
     companion object {
 
+        private const val UNDEFINED_BIN = ""
         private const val UNDEFINED_ID = -1
         private const val ID_KEY = "ID"
+        private const val BIN = "BIN"
 
-        fun newInstance(binId: Int) =
-            DetailFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ID_KEY, binId)
-                }
+        fun newInstanceFromDB(binId: Int) = DetailFragment().apply {
+            arguments = Bundle().apply {
+                putInt(ID_KEY, binId)
             }
+        }
+
+        fun newInstanceFromRemote(bin: String) = DetailFragment().apply {
+            arguments = Bundle().apply {
+                putString(BIN, bin)
+            }
+        }
     }
 }

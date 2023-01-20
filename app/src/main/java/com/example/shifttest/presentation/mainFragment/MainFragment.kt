@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shifttest.R
-import com.example.shifttest.data.remoteDataSource.Resource
 import com.example.shifttest.databinding.FragmentMainBinding
 import com.example.shifttest.presentation.mainFragment.MainRcView.BinAdapter
 import com.example.shifttest.utils.ConnectionLiveData
@@ -63,19 +61,17 @@ class MainFragment : Fragment() {
 
         setConnectionLiveData() // check connection to the server
         setRecView()
-        setNetworkLiveData() // livedata for response from api
         observeTilViewModel() // control for error input
         setTextChangeListener() // control of search line for empty
 
         binding.searchButton.setOnClickListener {
             if (connectionLiveData.value == true) {
-                viewModel.getInfo(binding.edText.text.toString())
-            } else {
-                showErrorSnackBar()
-            }
+                val bin = binding.edText.text.toString()
+                if (viewModel.checkCorrect(bin))
+                    openSecondFragmentListener?.openSecondFragmentByBin(bin)
+            } else showErrorSnackBar()
         }
     }
-
 
     private fun setTextChangeListener() {
         binding.edText.addTextChangedListener(object : TextWatcher {
@@ -98,28 +94,6 @@ class MainFragment : Fragment() {
             binding.til.error = message
         }
     }
-
-    private fun setNetworkLiveData() {
-        viewModel.allData.observe(viewLifecycleOwner) { response ->
-            when (response) {
-                is Resource.Success -> {
-                    setVisibleView(binding.rcView)
-                    Log.e("MainActivity123", "Success")
-                }
-                is Resource.Error -> {
-                    setVisibleView(binding.rcView)
-                    Snackbar.make(binding.root, response.message.toString(), Snackbar.LENGTH_LONG)
-                        .show()
-                    Log.e("MainActivity", response.message.toString())
-                }
-                is Resource.Loading -> {
-                    setVisibleView(binding.progressBar)
-                }
-            }
-
-        }
-    }
-
 
     private fun setRecView() {
         listAdapter = BinAdapter()
@@ -155,7 +129,7 @@ class MainFragment : Fragment() {
 
     private fun setItemClickListener() {
         listAdapter.onItemClickListener = { bin ->
-            bin.id?.let { itemId -> openSecondFragmentListener?.openSecondFragment(itemId) }
+            bin.id?.let { itemId -> openSecondFragmentListener?.openSecondFragmentById(itemId) }
         }
     }
 
@@ -192,6 +166,7 @@ class MainFragment : Fragment() {
         ).show()
 
     interface OpenSecondFragmentListener {
-        fun openSecondFragment(itemId: Int)
+        fun openSecondFragmentById(itemId: Int)
+        fun openSecondFragmentByBin(bin: String)
     }
 }
