@@ -1,7 +1,7 @@
 package com.example.shifttest.domain
 
 import androidx.lifecycle.LiveData
-import com.example.shifttest.data.remoteModel.BinData
+import com.example.shifttest.model.BinData
 import retrofit2.Response
 
 interface Repository {

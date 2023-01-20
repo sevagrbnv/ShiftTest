@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-
-import com.example.shifttest.data.remoteModel.BinData
 import com.example.shifttest.data.remoteDataSource.Resource
-import com.example.shifttest.domain.*
+import com.example.shifttest.domain.AddBinUseCase
+import com.example.shifttest.domain.DeleteBinUseCase
+import com.example.shifttest.domain.GetBinListUseCase
+import com.example.shifttest.domain.GetRemoteBinUseCase
+import com.example.shifttest.model.BinData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,19 +36,10 @@ class MainViewModel @Inject constructor(
             val response = getRemoteBinUseCase.execute(bin)
 
             if (response?.isSuccessful == true) {
-                var ready: Deferred<Unit>? = null
-                response.body().let {
-                    if (it != null) {
-                        ready = async {
-                            addBin(
-                                it.copy(
-                                    request = binString
-                                )
-                            )
-                        }
+                response.body().let { bin ->
+                    launch {
+                        bin?.let { addBin(it.copy(request = binString)) }
                     }
-                    ready?.await()
-                    _allData.postValue(Resource.Success(it))
                 }
             } else {
                 _allData.postValue(Resource.Error(message = "404, not found"))
@@ -56,11 +47,8 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun addBin(bin: BinData) {
-        viewModelScope.launch {
-            val last = addBinUseCase.execute(bin)
-        }
-    }
+    private suspend fun addBin(bin: BinData) =
+        addBinUseCase.execute(bin).toInt()
 
     fun deleteBin(bin: BinData) {
         viewModelScope.launch {

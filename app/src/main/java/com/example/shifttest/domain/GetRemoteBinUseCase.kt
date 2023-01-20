@@ -1,7 +1,6 @@
 package com.example.shifttest.domain
 
-import com.example.shifttest.data.remoteModel.BinData
-import com.example.shifttest.data.RepositoryImpl
+import com.example.shifttest.model.BinData
 import retrofit2.Response
 import javax.inject.Inject
 

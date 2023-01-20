@@ -4,8 +4,7 @@ import android.app.Application
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.shifttest.data.remoteModel.Bank
-import com.example.shifttest.data.remoteModel.BinData
+import com.example.shifttest.model.BinData
 
 @Database(entities = [BinData::class], version = 1, exportSchema = false)
 abstract class AppDataBase(): RoomDatabase() {

@@ -1,6 +1,6 @@
 package com.example.shifttest.data.remoteDataSource
 
-import com.example.shifttest.data.remoteModel.BinData
+import com.example.shifttest.model.BinData
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

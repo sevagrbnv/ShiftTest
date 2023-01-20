@@ -1,7 +1,7 @@
 package com.example.shifttest.presentation.mainFragment.MainRcView
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.shifttest.data.remoteModel.BinData
+import com.example.shifttest.model.BinData
 
 class BinDiffCallBack: DiffUtil.ItemCallback<BinData>() {
 

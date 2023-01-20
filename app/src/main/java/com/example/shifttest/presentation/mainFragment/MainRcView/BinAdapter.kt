@@ -6,8 +6,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import com.example.shifttest.R
-import com.example.shifttest.data.remoteModel.BinData
 import com.example.shifttest.databinding.BinItemBinding
+import com.example.shifttest.model.BinData
 
 class BinAdapter: ListAdapter<BinData, BinViewHolder>(
     BinDiffCallBack()

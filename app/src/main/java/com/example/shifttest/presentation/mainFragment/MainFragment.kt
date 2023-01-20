@@ -5,11 +5,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -19,7 +19,6 @@ import com.example.shifttest.databinding.FragmentMainBinding
 import com.example.shifttest.presentation.mainFragment.MainRcView.BinAdapter
 import com.example.shifttest.utils.ConnectionLiveData
 import com.google.android.material.snackbar.Snackbar
-
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -49,7 +48,7 @@ class MainFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -59,21 +58,21 @@ class MainFragment : Fragment() {
 
         viewModel.binList.observe(viewLifecycleOwner) {
             listAdapter.submitList(it)
-            checkListForEmpty(binding.rcView)
+            checkListForEmpty()
         }
 
         setConnectionLiveData() // check connection to the server
-        setRecView(view)
-        setNetworkLiveData() // livedata for responce from api
+        setRecView()
+        setNetworkLiveData() // livedata for response from api
         observeTilViewModel() // control for error input
         setTextChangeListener() // control of search line for empty
 
         binding.searchButton.setOnClickListener {
             if (connectionLiveData.value == true) {
-                viewModel.getInfo(
-                    binding.edText.text.toString()
-                )
-            } else showErrorSnackBar()
+                viewModel.getInfo(binding.edText.text.toString())
+            } else {
+                showErrorSnackBar()
+            }
         }
     }
 
@@ -101,17 +100,17 @@ class MainFragment : Fragment() {
     }
 
     private fun setNetworkLiveData() {
-        viewModel.allData.observe(viewLifecycleOwner) { responce ->
-            when (responce) {
+        viewModel.allData.observe(viewLifecycleOwner) { response ->
+            when (response) {
                 is Resource.Success -> {
                     setVisibleView(binding.rcView)
                     Log.e("MainActivity123", "Success")
                 }
                 is Resource.Error -> {
                     setVisibleView(binding.rcView)
-                    Snackbar.make(binding.root, getString(R.string.not_found), Snackbar.LENGTH_LONG)
+                    Snackbar.make(binding.root, response.message.toString(), Snackbar.LENGTH_LONG)
                         .show()
-                    Log.e("MainActivity", "Error 404")
+                    Log.e("MainActivity", response.message.toString())
                 }
                 is Resource.Loading -> {
                     setVisibleView(binding.progressBar)
@@ -122,7 +121,7 @@ class MainFragment : Fragment() {
     }
 
 
-    private fun setRecView(view: View) {
+    private fun setRecView() {
         listAdapter = BinAdapter()
         with(binding.rcView) {
             adapter = listAdapter
@@ -155,20 +154,20 @@ class MainFragment : Fragment() {
     }
 
     private fun setItemClickListener() {
-        listAdapter.onItemClickListener = {
-            it.id?.let { it1 -> openSecondFragmentListener?.openSecondFragment(it1) }
+        listAdapter.onItemClickListener = { bin ->
+            bin.id?.let { itemId -> openSecondFragmentListener?.openSecondFragment(itemId) }
         }
     }
 
     // set text "history is empty" on empty list
-    private fun checkListForEmpty(rcView: RecyclerView) {
+    private fun checkListForEmpty() {
         if (viewModel.isEmptyList()) {
             setVisibleView(binding.emptyView)
         }
     }
 
-    //Manage visibility of RececlerView and other elements
-    fun setVisibleView(view: View) {
+    //Manage visibility of RecyclerView and other elements
+    private fun setVisibleView(view: View) {
         binding.rcView.isVisible = false
         binding.emptyView.isVisible = false
         binding.progressBar.isVisible = false
@@ -182,10 +181,10 @@ class MainFragment : Fragment() {
 
     private fun setConnectionLiveData() {
         connectionLiveData = ConnectionLiveData(binding.root.context)
-        connectionLiveData.observe(viewLifecycleOwner) { it }
+        connectionLiveData.observe(viewLifecycleOwner) { }
     }
 
-    fun showErrorSnackBar() =
+    private fun showErrorSnackBar() =
         Snackbar.make(
             binding.root,
             getString(R.string.no_internet_connection),

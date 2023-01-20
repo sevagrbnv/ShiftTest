@@ -1,6 +1,6 @@
 package com.example.shifttest.domain
 
-import com.example.shifttest.data.remoteModel.BinData
+import com.example.shifttest.model.BinData
 import javax.inject.Inject
 
 class DeleteBinUseCase @Inject constructor(

@@ -5,7 +5,7 @@
     <data>
         <variable
             name="bin"
-            type="com.example.shifttest.data.remoteModel.BinData" />
+            type="com.example.shifttest.model.BinData" />
     </data>
 
     <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"

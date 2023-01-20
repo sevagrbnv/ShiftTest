@@ -1,4 +1,4 @@
-package com.example.shifttest.data.remoteModel
+package com.example.shifttest.model
 
 data class Number(
     val length: Int = 0,

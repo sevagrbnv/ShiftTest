@@ -9,8 +9,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.shifttest.databinding.FragmentDetailBinding
+import com.example.shifttest.model.BinData
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
@@ -27,64 +27,82 @@ class DetailFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initValues()
+        initData()
     }
 
-    private fun initValues() {
+    private fun initData() {
         viewModel.getItem(itemId)
         viewModel.item.observe(viewLifecycleOwner) {
+            setData(it)
+        }
+    }
 
-            binding.request.text = it.request
-            binding.number.text = "length: ${it.number.length}, luhn: ${it.number.luhn}"
-            binding.scheme.text = "scheme: ${it.scheme}"
-            binding.type.text = "type: ${it.type}"
-            binding.brand.text = "brand: ${it.brand}"
-            binding.prepaid.text = "prepaid: ${it.prepaid.toString()}"
+    private fun setClickListeners() {
+        val item = viewModel.item.value
 
-            binding.cnumeric.text = "numeric: ${it.country.numeric}"
-            binding.calpha.text = "alpha2: ${it.country.alpha2}"
-            binding.cname.text = "name: ${it.country.name}"
-            binding.cemoji.text = "emoji: ${it.country.emoji}"
-            binding.ccurrency.text = "curency: ${it.country.currency}"
-            binding.clatitude.text = "lat: ${it.country.latitude}"
-            binding.clongitude.text = "lon: ${it.country.longitude}"
-
-            binding.bname.text = "name: ${it.bank.name}"
-            binding.burl.text = "url: ${it.bank.url}"
-            binding.bphone.text = "phone: ${it.bank.phone}"
-            binding.bcity.text = "city: ${it.bank.city}"
-
-            binding.bphone.setOnClickListener { view ->
-                if (it.bank.phone != "-") {
-                    val intent =
-                        Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", it.bank.phone, null))
-                    startActivity(intent)
-                }
-            }
-
-            binding.burl.setOnClickListener { view ->
-                val i = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("https://${it.bank.url}")
-                )
-                startActivity(i)
-            }
-
-            binding.columnOne.setOnClickListener { view ->
+        binding.bphone.setOnClickListener {
+            val phone = item?.bank?.phone
+            if (phone != "-") {
                 val intent = Intent(
-                    Intent.ACTION_VIEW,
-                    Uri.parse("geo:0,0?q=${it.country.latitude},${it.country.longitude}")
+                    Intent.ACTION_DIAL,
+                    Uri.fromParts("tel", phone, null)
                 )
                 startActivity(intent)
             }
         }
+
+        binding.burl.setOnClickListener {
+            val url = item?.bank?.url
+            if (url != "-") {
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://${url}")
+                )
+                startActivity(intent)
+            }
+        }
+
+        binding.columnOne.setOnClickListener {
+            val intent = Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(
+                    "geo:0,0?q=${(item?.country?.latitude)}," +
+                            "${(item?.country?.longitude)}"
+                )
+            )
+            startActivity(intent)
+        }
+    }
+
+    private fun setData(item: BinData) {
+        binding.request.text = item.request
+        binding.number.text = "length: ${item.number.length}, luhn: ${item.number.luhn}"
+        binding.scheme.text = "scheme: ${item.scheme}"
+        binding.type.text = "type: ${item.type}"
+        binding.brand.text = "brand: ${item.brand}"
+        binding.prepaid.text = "prepaid: ${item.prepaid.toString()}"
+
+        binding.cnumeric.text = "numeric: ${item.country.numeric}"
+        binding.calpha.text = "alpha2: ${item.country.alpha2}"
+        binding.cname.text = "name: ${item.country.name}"
+        binding.cemoji.text = "emoji: ${item.country.emoji}"
+        binding.ccurrency.text = "curency: ${item.country.currency}"
+        binding.clatitude.text = "lat: ${item.country.latitude}"
+        binding.clongitude.text = "lon: ${item.country.longitude}"
+
+        binding.bname.text = "name: ${item.bank.name}"
+        binding.burl.text = "url: ${item.bank.url}"
+        binding.bphone.text = "phone: ${item.bank.phone}"
+        binding.bcity.text = "city: ${item.bank.city}"
+
+        setClickListeners()
     }
 
     private fun parseParam() {

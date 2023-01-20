@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shifttest.data.remoteModel.BinData
 import com.example.shifttest.domain.GetBinByIdUseCase
+import com.example.shifttest.model.BinData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,7 +20,7 @@ class DetailViewModel @Inject constructor(
         get() = _item
 
     fun getItem(itemId: Int) =
-        viewModelScope.async {
+        viewModelScope.launch {
             val item = getBinUseCase.execute(itemId)
             _item.postValue(item)
         }

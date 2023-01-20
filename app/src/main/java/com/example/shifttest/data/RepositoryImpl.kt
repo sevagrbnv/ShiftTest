@@ -3,7 +3,7 @@ package com.example.shifttest.data
 import androidx.lifecycle.LiveData
 import com.example.shifttest.data.localDataSource.BinDao
 import com.example.shifttest.data.remoteDataSource.ApiService
-import com.example.shifttest.data.remoteModel.BinData
+import com.example.shifttest.model.BinData
 import com.example.shifttest.domain.Repository
 import retrofit2.Response
 import javax.inject.Inject

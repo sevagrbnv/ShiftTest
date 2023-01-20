@@ -1,4 +1,4 @@
-package com.example.shifttest.data.remoteModel
+package com.example.shifttest.model
 
 import androidx.room.Embedded
 import androidx.room.Entity

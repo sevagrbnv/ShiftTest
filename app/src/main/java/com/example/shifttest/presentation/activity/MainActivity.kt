@@ -1,17 +1,12 @@
 package com.example.shifttest.presentation.activity
 
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.FragmentTransitionImpl
 import com.example.shifttest.R
 import com.example.shifttest.presentation.detailFragment.DetailFragment
-import com.example.shifttest.utils.ConnectionLiveData
 import com.example.shifttest.presentation.mainFragment.MainFragment
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 
