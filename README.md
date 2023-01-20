@@ -16,7 +16,7 @@
 
 Обработка 404 ошибки
 
-<img src="https://user-images.githubusercontent.com/65513466/213297629-35b999e1-1a74-4e76-9c78-216a14bedac6.png" width="250">
+<img src="https://user-images.githubusercontent.com/65513466/213747637-0755d98f-ef0a-4d5d-99fa-76677a2b5f1e.png" width="250">
 
 Экран деталей
 
