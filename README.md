@@ -1,6 +1,6 @@
 # ShiftTest
 Тестовое задание на ШИФТ ЦФТ
-Ссылка на скачивание с Гугл диска: https://drive.google.com/file/d/1_YrkFeMDDNsu8JpQxhpH30g57l2q1ayb/view?usp=share_link
+Ссылка на скачивание с Гугл диска: https://drive.google.com/file/d/1XdvlNb4wQMbJRrU36VS4PZZQ3L5LUuVp/view?usp=sharing
 
 Пустая история
 
