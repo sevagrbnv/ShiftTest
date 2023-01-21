@@ -10,12 +10,12 @@ data class BinData(
     val id: Int? = null,
     val request: String = "",
     @Embedded(prefix = "bank_")
-    val bank: Bank,
+    val bank: Bank = Bank(),
     val brand: String = "-",
     @Embedded(prefix = "country_")
-    val country: Country,
+    val country: Country = Country(),
     @Embedded(prefix = "number_")
-    val number: Number,
+    val number: Number = Number(),
     val prepaid: Boolean = false,
     val scheme: String = "-",
     val type: String = "-"

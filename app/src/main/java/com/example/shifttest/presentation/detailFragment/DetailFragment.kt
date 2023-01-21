@@ -15,14 +15,18 @@ import com.example.shifttest.databinding.FragmentDetailBinding
 import com.example.shifttest.model.BinData
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
 
     private lateinit var binding: FragmentDetailBinding
     val viewModel by viewModels<DetailViewModel>()
-    private var itemId = UNDEFINED_ID
-    private var itemBin = UNDEFINED_BIN
+    private var itemId: Int? = UNDEFINED_ID
+    private var itemBin: String? = UNDEFINED_BIN
+
+    private var isReady: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,12 +47,19 @@ class DetailFragment : Fragment() {
         initData()
     }
 
-    private fun initData() {
+    private fun initData() = runBlocking {
+
+        if (itemBin != UNDEFINED_BIN) {
+            val a = launch {
+                itemBin?.let { viewModel.getRemoteInfo(it) }
+            }
+            a.join()
+            itemId = viewModel.remoteBinId.value
+        }
         if (itemId != UNDEFINED_ID)
-            viewModel.getItemFromDB(itemId)
-        else if (itemBin != UNDEFINED_BIN)
-            viewModel.getRemoteInfo(itemBin)
+            itemId?.let { viewModel.getItemFromDB(it) }
         else throw RuntimeException("UNDEFINED MODE")
+
         viewModel.item.observe(viewLifecycleOwner) { bin ->
             bin?.let {
                 setData(it)
@@ -61,6 +72,7 @@ class DetailFragment : Fragment() {
             when (response) {
                 is Resource.Success -> {
                     shouldToShowProgressBar(false)
+                    isReady = true
                 }
                 is Resource.Error -> {
                     shouldToShowProgressBar(false)
@@ -119,25 +131,27 @@ class DetailFragment : Fragment() {
 
     private fun setData(item: BinData) {
         shouldToShowProgressBar(false)
-        binding.request.text = item.request
-        binding.number.text = "length: ${item.number.length}, luhn: ${item.number.luhn}"
-        binding.scheme.text = "scheme: ${item.scheme}"
-        binding.type.text = "type: ${item.type}"
-        binding.brand.text = "brand: ${item.brand}"
-        binding.prepaid.text = "prepaid: ${item.prepaid.toString()}"
+        item.let { item ->
+            binding.request.text = item?.request
+            binding.number.text = "length: ${item.number.length}, luhn: ${item.number.luhn}"
+            binding.scheme.text = "scheme: ${item.scheme}"
+            binding.type.text = "type: ${item.type}"
+            binding.brand.text = "brand: ${item.brand}"
+            binding.prepaid.text = "prepaid: ${item.prepaid.toString()}"
 
-        binding.cnumeric.text = "numeric: ${item.country.numeric}"
-        binding.calpha.text = "alpha2: ${item.country.alpha2}"
-        binding.cname.text = "name: ${item.country.name}"
-        binding.cemoji.text = "emoji: ${item.country.emoji}"
-        binding.ccurrency.text = "curency: ${item.country.currency}"
-        binding.clatitude.text = "lat: ${item.country.latitude}"
-        binding.clongitude.text = "lon: ${item.country.longitude}"
+            binding.cnumeric.text = "numeric: ${item.country.numeric}"
+            binding.calpha.text = "alpha2: ${item.country.alpha2}"
+            binding.cname.text = "name: ${item.country.name}"
+            binding.cemoji.text = "emoji: ${item.country.emoji}"
+            binding.ccurrency.text = "curency: ${item.country.currency}"
+            binding.clatitude.text = "lat: ${item.country.latitude}"
+            binding.clongitude.text = "lon: ${item.country.longitude}"
 
-        binding.bname.text = "name: ${item.bank.name}"
-        binding.burl.text = "url: ${item.bank.url}"
-        binding.bphone.text = "phone: ${item.bank.phone}"
-        binding.bcity.text = "city: ${item.bank.city}"
+            binding.bname.text = "name: ${item.bank.name}"
+            binding.burl.text = "url: ${item.bank.url}"
+            binding.bphone.text = "phone: ${item.bank.phone}"
+            binding.bcity.text = "city: ${item.bank.city}"
+        }
 
         setClickListeners()
     }

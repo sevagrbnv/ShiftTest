@@ -9,6 +9,7 @@ import com.example.shifttest.domain.AddBinUseCase
 import com.example.shifttest.domain.GetBinByIdUseCase
 import com.example.shifttest.domain.GetRemoteBinUseCase
 import com.example.shifttest.model.BinData
+import com.example.shifttest.utils.copyBin
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,6 +30,9 @@ class DetailViewModel @Inject constructor(
         _item.postValue(item)
     }
 
+    private val _remoteBinId = MutableLiveData<Int>()
+    val remoteBinId: LiveData<Int>
+        get() = _remoteBinId
 
     private val _allData = MutableLiveData<Resource<BinData>>()
     val allData: LiveData<Resource<BinData>>
@@ -41,8 +45,9 @@ class DetailViewModel @Inject constructor(
         if (response?.isSuccessful == true) {
             response.body().let { bin ->
                 bin.let {
-                    val item = it?.copy(request = binString)
-                    addBin(item)
+                    val item = copyBin(it, binString)
+                    val a = launch { addBin(item) }
+                    a.join()
                     _item.postValue(item)
                 }
             }
@@ -51,7 +56,7 @@ class DetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun addBin(bin: BinData?) =
-        bin?.let { addBinUseCase.execute(it).toInt() }
-
+    private suspend fun addBin(bin: BinData?) {
+        bin?.let { _remoteBinId.postValue(addBinUseCase.execute(it).toInt()) }
+    }
 }
