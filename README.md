@@ -1,6 +1,6 @@
 # ShiftTest
 Тестовое задание на ШИФТ ЦФТ
-Ссылка на скачивание с Гугл диска: https://drive.google.com/file/d/1_YrkFeMDDNsu8JpQxhpH30g57l2q1ayb/view?usp=share_link
+Ссылка на скачивание с Гугл диска: https://drive.google.com/file/d/1XdvlNb4wQMbJRrU36VS4PZZQ3L5LUuVp/view?usp=sharing
 
 Пустая история
 
@@ -16,7 +16,7 @@
 
 Обработка 404 ошибки
 
-<img src="https://user-images.githubusercontent.com/65513466/213297629-35b999e1-1a74-4e76-9c78-216a14bedac6.png" width="250">
+<img src="https://user-images.githubusercontent.com/65513466/213747637-0755d98f-ef0a-4d5d-99fa-76677a2b5f1e.png" width="250">
 
 Экран деталей
 
