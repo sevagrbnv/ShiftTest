@@ -25,6 +25,6 @@
 
 <img src="https://user-images.githubusercontent.com/65513466/213297713-91f2428a-c3bd-494c-a5fe-355a58bc40e3.png" width="250">
 
-Удаление записи из истории
+Удаление записи из истории с помощью свайпа
 
 <img src="https://user-images.githubusercontent.com/65513466/213297741-a3816530-c002-4696-91a5-fe318b156ed2.png" width="250">
